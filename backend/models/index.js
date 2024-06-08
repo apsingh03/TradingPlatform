@@ -29,20 +29,20 @@ db.sequelize = sequelize;
 
 // table name
 db.users = require("./UserModel.js")(sequelize, DataTypes);
-// db.tasks = require("./TasksModel.js")(sequelize, DataTypes);
+db.orders = require("./OrderModel.js")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("------------ Congratulation You are in Sync -------------- ");
 });
 
-// db.users.hasMany(db.tasks, {
-//   foreignKey: "user_id",
-//   as: "user",
-// });
+db.users.hasMany(db.orders, {
+  foreignKey: "user_id",
+  as: "user",
+});
 
-// db.tasks.belongsTo(db.users, {
-//   foreignKey: "user_id",
-//   as: "user",
-// });
+db.orders.belongsTo(db.users, {
+  foreignKey: "user_id",
+  as: "user",
+});
 
 module.exports = db;

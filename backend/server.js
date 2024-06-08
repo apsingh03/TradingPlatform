@@ -14,11 +14,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
 const authRute = require("./routes/AuthenticationRoutes");
+const tradingRoute = require("./routes/OrdersRoutes");
 
-// app.use("/tasks", taskRoute);
 app.use("/api", authRute);
+app.use("/trading", tradingRoute);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Listening on port ${process.env.PORT}`);

@@ -14,3 +14,24 @@
 .dashboard {
   padding: 20px;
 }
+
+
+#home {
+  padding: 30px;
+  background-color: #ddd;
+}
+
+.placeOrderContainer {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.pendingContainer {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.completedContainer {
+    padding: 20px;
+      background-color: #fff;
+}
