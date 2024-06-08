@@ -1,16 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-{
-  /* The following line can be included in your src/index.js or App.js file */
-}
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom";
+
+import { store } from "./Redux/Store";
+import { Provider } from "react-redux";
+
 import "bootstrap/dist/css/bootstrap.min.css";
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+        <ToastContainer />
+      </Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
