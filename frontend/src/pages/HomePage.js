@@ -14,7 +14,7 @@ import UserPlacedOrderTable from "../components/UserPlacedOrderTable";
 const HomePage = () => {
   const dispatch = useDispatch();
   const orderRedux = useSelector((state) => state.order);
-  // console.log(orderRedux);
+  // console.log(orderRedux.orderBookdata);
 
   const [isLoading, setisLoading] = useState(false);
 

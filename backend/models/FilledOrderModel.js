@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const OrderBook = sequelize.define(
-    "orderBook",
+  const filledOrderModel = sequelize.define(
+    "filledOrderModel",
     {
       price: {
         type: DataTypes.INTEGER,
@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      status: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -28,5 +32,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return OrderBook;
+  return filledOrderModel;
 };

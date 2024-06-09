@@ -31,6 +31,7 @@ db.sequelize = sequelize;
 db.users = require("./UserModel.js")(sequelize, DataTypes);
 db.orderBook = require("./OrderBookModel.js")(sequelize, DataTypes);
 db.userOrder = require("./UserOrderModel.js")(sequelize, DataTypes);
+// db.filledOrder = require("./FilledOrderModel.js")(sequelize, DataTypes);
 
 db.sequelize.sync({ force: false }).then(() => {
   console.log("------------ Congratulation You are in Sync -------------- ");

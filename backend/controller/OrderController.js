@@ -27,6 +27,7 @@ const getOrderBook = async (req, res) => {
           },
         },
       ],
+      where: { user_id: req.user.id },
       transaction: t,
     });
 
@@ -43,7 +44,10 @@ const getOrderBook = async (req, res) => {
 const createOrder = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    // console.log( req.user )
+    // console.log(
+    //   "---------------------------------------------------------------------------------"
+    // );
+    console.log("req.body - ", req.body);
 
     const priceExist = await OrderBook.findOne({
       where: { price: req.body.orderPrice, type: req.body.orderType },
@@ -55,6 +59,7 @@ const createOrder = async (req, res) => {
         price: req.body.orderPrice,
         qty: req.body.orderQty,
         type: req.body.orderType,
+        status: "Pending",
         createdAt: new Date(),
         user_id: req.user.id,
       },
@@ -83,7 +88,7 @@ const createOrder = async (req, res) => {
         userOrders: userOrdersQuery,
       });
     } else {
-      // console.log("--------- New Order ----------- ");
+      // console.log("---------------------------------- New Order ----------- ");
       const createOrderBookQuery = await OrderBook.create(
         {
           price: req.body.orderPrice,
@@ -105,7 +110,23 @@ const createOrder = async (req, res) => {
     }
     // console.log("Req.body - ", req.body);
   } catch (error) {
+    // console.error("Error during transaction:", error);
     await t.rollback();
+    return res.status(500).send({ error: error.message });
+  }
+};
+
+const patchOrder = async (req, res) => {
+  // const t = await sequelize.transaction();
+  try {
+    console.log("req.body - ", req.body);
+
+    // await t.commit();
+    return res.status(200).send({
+      msg: "patchOrder",
+    });
+  } catch (error) {
+    // await t.rollback();
     return res.status(500).send({ error: error.message });
   }
 };
@@ -113,4 +134,5 @@ const createOrder = async (req, res) => {
 module.exports = {
   getOrderBook,
   createOrder,
+  patchOrder,
 };

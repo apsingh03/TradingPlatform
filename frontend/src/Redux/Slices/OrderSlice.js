@@ -49,6 +49,29 @@ export const createOrderAsync = createAsyncThunk(
   }
 );
 
+export const patchOrderAsync = createAsyncThunk(
+  "order/patchOrder",
+  async ({}) => {
+    try {
+      const response = await axios.patch(
+        `${HOSTNAME}/trading/order/`,
+        {
+          // orderPrice,
+          // orderQty,
+          // orderType,
+        },
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
+      // console.log(" resopnse data " , response.data );
+      return response.data;
+    } catch (error) {
+      console.log("patchOrderAsync Error - ", error.response);
+    }
+  }
+);
+
 const initialState = {
   orderBookdata: [],
   userOrdersdata: [],

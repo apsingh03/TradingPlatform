@@ -8,13 +8,9 @@ import { toast } from "react-toastify";
 
 const PlaceOrder = ({ setisLoading }) => {
   const dispatch = useDispatch();
-  const orderRedux = useSelector((state) => state.order);
-
   //   console.log(orderRedux);
 
-  useEffect(() => {
-    dispatch(getAllOrdersAsync());
-  }, []);
+  useEffect(() => {}, []);
 
   async function handlePlaceOrder(event) {
     setisLoading(true);
@@ -24,9 +20,6 @@ const PlaceOrder = ({ setisLoading }) => {
     const orderQty = event.target.orderQty.value;
     const orderType = event.target.orderType.value;
 
-    // console.log(orderPrice);
-    // console.log(orderQty);
-    // console.log(orderType);
     const actionResult = await dispatch(
       createOrderAsync({
         orderPrice,
@@ -34,7 +27,7 @@ const PlaceOrder = ({ setisLoading }) => {
         orderType,
       })
     );
-
+    console.log("actionResult ", actionResult);
     if (actionResult.payload.msg === "Order Created") {
       toast.success(actionResult.payload.msg);
       event.target.orderPrice.value = "";
