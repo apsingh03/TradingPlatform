@@ -44,13 +44,14 @@ export const createOrderAsync = createAsyncThunk(
       // console.log(" resopnse data " , response.data );
       return response.data;
     } catch (error) {
-      console.log("createUserAsync Error - ", error.response);
+      console.log("createOrderAsync Error - ", error.response);
     }
   }
 );
 
 const initialState = {
-  data: [],
+  orderBookdata: [],
+  userOrdersdata: [],
   isLoading: false,
   isError: false,
 };
@@ -68,7 +69,13 @@ export const orderSlice = createSlice({
 
       .addCase(getAllOrdersAsync.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload;
+        // console.log( "action" , action.payload );
+        try {
+          state.orderBookdata = action.payload.orderBook;
+          state.userOrdersdata = action.payload.userOrders;
+        } catch (error) {
+          console.log("Error - ", error.message);
+        }
       })
 
       .addCase(getAllOrdersAsync.rejected, (state, action) => {
@@ -83,15 +90,21 @@ export const orderSlice = createSlice({
       .addCase(createOrderAsync.fulfilled, (state, action) => {
         state.isLoading = false;
 
-        if (action.payload.msg === "Order Created") {
-          state.data.push(action.payload.order);
-        }
+        try {
+          if (action.payload.msg === "Order Created") {
+            state.orderBookdata.push(action.payload.orderBook);
+          }
 
-        if (action.payload.msg === "Order Appended") {
-          const findIdx = state.data.findIndex((data) => {
-            return data.id === action.payload.order.id;
-          });
-          state.data[findIdx].qty = action.payload.order.qty;
+          if (action.payload.msg === "Order Appended") {
+            const findIdx = state.orderBookdata.findIndex((data) => {
+              return data.id === action.payload.orderBook.id;
+            });
+            // console.log("findIdx - ", findIdx);
+            state.orderBookdata[findIdx].qty = action.payload.orderBook.qty;
+          }
+          state.userOrdersdata.unshift(action.payload.userOrders);
+        } catch (error) {
+          console.log("Error ", error.message);
         }
       })
 

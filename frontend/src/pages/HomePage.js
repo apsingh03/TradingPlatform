@@ -5,10 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import PlaceOrder from "../components/PlaceOrder";
-import PendingTable from "../components/PendingTable";
+import OrderBookTable from "../components/OrderBookTable";
 import CompletedTable from "../components/CompletedTable";
 
 import { getAllOrdersAsync } from "../Redux/Slices/OrderSlice";
+import UserPlacedOrderTable from "../components/UserPlacedOrderTable";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -45,11 +46,13 @@ const HomePage = () => {
 
                 <div className="col-12 col-md-6 mt-3">
                   <div className="pendingContainer">
-                    <h6 className="text-center"> Pending Order Table </h6>
+                    <h6 className="text-center"> Pending Order Book </h6>
 
-                    <PendingTable
+                    <OrderBookTable
                       setisLoading={setisLoading}
-                      orderDataFromRedux={orderRedux.data && orderRedux.data}
+                      orderDataFromRedux={
+                        orderRedux.orderBookdata && orderRedux.orderBookdata
+                      }
                     />
                   </div>
                 </div>
@@ -58,6 +61,17 @@ const HomePage = () => {
                     <h6 className="text-center"> Completed Order Table</h6>
                     <CompletedTable />
                   </div>
+                </div>
+              </div>
+
+              <div className="col-12  mt-3">
+                <div className="userOrderContainer">
+                  <h6 className="text-center">User Placed Orders</h6>
+                  <UserPlacedOrderTable
+                    orderDataFromRedux={
+                      orderRedux.userOrdersdata && orderRedux.userOrdersdata
+                    }
+                  />
                 </div>
               </div>
             </div>

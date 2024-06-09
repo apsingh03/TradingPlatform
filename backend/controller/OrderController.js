@@ -3,14 +3,20 @@ const db = require("../models/");
 
 // Tables
 const Users = db.users;
-const Orders = db.orders;
+const OrderBook = db.orderBook;
+const UserOrders = db.userOrder;
+
 const Sequelize = db.Sequelize;
 const sequelize = db.sequelize;
 
-const getOrder = async (req, res) => {
+const getOrderBook = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     // console.log("Req.body - ", req.body);
-    const query = await Orders.findAll({
+    const OrderBookquery = await OrderBook.findAll({
+      transaction: t,
+    });
+    const UserOrdersquery = await UserOrders.findAll({
       include: [
         {
           model: Users,
@@ -21,52 +27,90 @@ const getOrder = async (req, res) => {
           },
         },
       ],
+      transaction: t,
     });
-    return res.status(200).send(query);
+
+    await t.commit();
+    return res
+      .status(200)
+      .send({ orderBook: OrderBookquery, userOrders: UserOrdersquery });
   } catch (error) {
+    await t.rollback();
     return res.status(500).send({ error: error.message });
   }
 };
 
 const createOrder = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     // console.log( req.user )
-    const data = {
-      price: req.body.orderPrice,
-      qty: req.body.orderQty,
-      type: req.body.orderType,
-      createdAt: Date.now(),
-      user_id: req.user.id,
-    };
 
-    const priceExist = await Orders.findOne({
-      where: { price: req.body.orderPrice },
+    const priceExist = await OrderBook.findOne({
+      where: { price: req.body.orderPrice, type: req.body.orderType },
+      transaction: t,
     });
 
+    const userOrdersQuery = await UserOrders.create(
+      {
+        price: req.body.orderPrice,
+        qty: req.body.orderQty,
+        type: req.body.orderType,
+        createdAt: new Date(),
+        user_id: req.user.id,
+      },
+      { transaction: t }
+    );
+
     if (priceExist) {
+      // console.log("------- priceExist ----------");
       const newQty = parseInt(priceExist.qty) + parseInt(req.body.orderQty);
-      console.log(`old - ${req.body.orderQty} new Qty - ${newQty}`);
-      const query = await Orders.update(
-        { qty: newQty, updatedAt: Date.now() },
-        { where: { price: req.body.orderPrice } }
+      // console.log(`old - ${req.body.orderQty} new Qty - ${newQty}`);
+      const updateQtyQuery = await OrderBook.update(
+        { qty: newQty, updatedAt: new Date() },
+        { where: { price: req.body.orderPrice }, transaction: t }
       );
-      const resultAfterQuery = await Orders.findOne({
+
+      const resultAfterUpdateQtyQuery = await OrderBook.findOne({
         where: { id: priceExist.id },
+        transaction: t,
       });
 
-      return res
-        .status(200)
-        .send({ msg: "Order Appended", order: resultAfterQuery });
+      await t.commit();
+      // .send({ orderBook: OrderBookquery, userOrders: userOrdersQuery });
+      return res.status(200).send({
+        msg: "Order Appended",
+        orderBook: resultAfterUpdateQtyQuery,
+        userOrders: userOrdersQuery,
+      });
     } else {
-      const query = await Orders.create(data);
-      return res.status(200).send({ msg: "Order Created", order: query });
+      // console.log("--------- New Order ----------- ");
+      const createOrderBookQuery = await OrderBook.create(
+        {
+          price: req.body.orderPrice,
+          qty: req.body.orderQty,
+          type: req.body.orderType,
+          createdAt: new Date(),
+        },
+        {
+          transaction: t,
+        }
+      );
+
+      await t.commit();
+      return res.status(200).send({
+        msg: "Order Created",
+        orderBook: createOrderBookQuery,
+        userOrders: userOrdersQuery,
+      });
     }
+    // console.log("Req.body - ", req.body);
   } catch (error) {
+    await t.rollback();
     return res.status(500).send({ error: error.message });
   }
 };
 
 module.exports = {
-  getOrder,
+  getOrderBook,
   createOrder,
 };
